@@ -1,0 +1,18 @@
+# Math & Matrix operations
+numpy<2.0.0
+
+# Tracking algorithms (Kalman filters & Hungarian assignment)
+filterpy
+scipy
+lap; platform_machine != "aarch64"  # LAP tracking solver
+
+# Utilities
+pillow
+pyyaml
+requests
+
+
+# For SpeedyBee
+pyserial
+pymavlink # MAVLINK Parsing for ArduPilot
+mavsdk # Asynchronous MAVSDK framework for python

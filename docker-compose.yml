@@ -1,0 +1,57 @@
+services:
+  dev:
+    profiles: ["dev"]
+    build:
+      context: .
+      dockerfile: Dockerfile.x86
+    container_name: drone-env-dev
+    image: drone:dev
+    ports:
+      # Stream Data between ground control and drone
+      - "14550:14550/udp"
+
+    # Keep container running
+    command: tail -f /dev/null
+    # enable nvidiaGPU inside container
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
+    
+    volumes:
+      - .:/app
+
+
+      # env 
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - PYTHONUNBUFFERED=1
+
+  target:
+    profiles: ["target"]
+    container_name: drone-env-prod
+    image: drone:prod
+    restart: unless-stopped
+    devices:
+      - "/dev/ttyTHS1:/dev/ttyTHS1"
+    ports:
+      # Stream Data between ground control and drone
+      - "14550:14550/udp"
+    build:
+      context: .
+      dockerfile: Dockerfile.jetpack
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: ["gpu"]
+              driver: nvidia
+              count: all
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - PYTHONUNBUFFERED=1
+
+
